@@ -10,7 +10,7 @@ namespace CampusFranceProject.StepDefinitions
     [Binding]
     public class CreationDunCompteCampusFranceStepDefinitions
     {
-        private IWebDriver driver;
+        private IWebDriver driver = null!;
 
         // ============================================================
         // AVANT / APRÈS SCÉNARIO
@@ -19,15 +19,39 @@ namespace CampusFranceProject.StepDefinitions
         [BeforeScenario]
         public void BeforeScenario()
         {
-            driver = new EdgeDriver();
-            driver.Manage().Window.Maximize();
+            var options = new EdgeOptions();
+
+            // Jenkins définit HEADLESS=true ; sur votre PC la variable n'existe pas
+            bool headless = Environment.GetEnvironmentVariable("HEADLESS") == "true";
+
+            if (headless)
+            {
+                // Mode sans fenêtre pour Jenkins
+                options.AddArgument("--headless=new");
+                options.AddArgument("--window-size=1920,1080");
+                options.AddArgument("--no-sandbox");
+                options.AddArgument("--disable-gpu");
+                options.AddArgument("--disable-dev-shm-usage");
+
+                // Profil temporaire (le compte système de Jenkins n'a pas de profil Edge)
+                options.AddArgument("--user-data-dir=" +
+                    System.IO.Path.Combine(System.IO.Path.GetTempPath(), "edge-jenkins-" + Guid.NewGuid()));
+            }
+
+            driver = new EdgeDriver(options);
+
+            if (!headless)
+            {
+                driver.Manage().Window.Maximize();
+            }
         }
 
         [AfterScenario]
         public void AfterScenario()
         {
-            driver.Quit();
-            driver.Dispose();
+            // Ne plante pas si Edge n'a pas pu démarrer
+            driver?.Quit();
+            driver?.Dispose();
         }
 
         // ============================================================
@@ -38,6 +62,10 @@ namespace CampusFranceProject.StepDefinitions
         public void GivenJeSuisSurLaPageCreerUnNouveauCompteDeCampusFrance(string url)
         {
             driver.Navigate().GoToUrl(url);
+
+            // Attendre que le formulaire soit chargé (plus lent en mode headless)
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
+            wait.Until(d => d.FindElements(By.Id("user-form")).Count > 0);
         }
 
 
@@ -368,7 +396,7 @@ namespace CampusFranceProject.StepDefinitions
         }
 
 
-            [Then("le nom renseigné est {string} pour institutionnel")]
+        [Then("le nom renseigné est {string} pour institutionnel")]
         public void ThenLeNomRenseigneEstPourInstitutionnel(string nomAttendu)
         {
             var form = driver.FindElement(By.Id("user-form"));
@@ -399,7 +427,7 @@ namespace CampusFranceProject.StepDefinitions
 
             System.Threading.Thread.Sleep(1000);
 
-            var wait = new WebDriverWait(driver,TimeSpan.FromSeconds(10)); // temps d'attente 1min
+            var wait = new WebDriverWait(driver,TimeSpan.FromSeconds(10)); // temps d'attente 10 secondes
 
             var option = wait.Until(d =>
             {
