@@ -22,7 +22,7 @@
 
     Examples:
       | civilite | nom       | prenom | pays_residence | nationalite | code_postal | ville   | telephone  | email                        | mot_de_passe | confirmation_mot_de_passe | domaine      | niveau_etudes |
-      | Madame   | Bouhadoun | Kenza   | France         | Algérienne  | 95220       | Herblay | 0612345678 | kenza.chercheur@example.com | cher@123456  | cher@123456                | Informatique | Licence 1      |
+      | Madame   | LOUCIF | Inasse   | France         | Algérienne  | 75000       | Paris | 0767391563 | inasse.chercheur@example.com | cher@123456  | cher@123456                | Informatique | Licence 1      |
 
 
   Scenario Outline: Création d'un compte Institutionnel
