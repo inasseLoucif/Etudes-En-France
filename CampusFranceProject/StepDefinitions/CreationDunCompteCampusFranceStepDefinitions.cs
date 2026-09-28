@@ -427,7 +427,7 @@ namespace CampusFranceProject.StepDefinitions
 
             System.Threading.Thread.Sleep(1000);
 
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10)); // temps d'attente 10 secondes
+            var wait = new WebDriverWait(driver,TimeSpan.FromSeconds(10)); // temps d'attente 1min
 
             var option = wait.Until(d =>
             {
