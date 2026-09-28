@@ -121,7 +121,7 @@ namespace CampusFranceProject.Features
         
         [global::NUnit.Framework.TestAttribute()]
         [global::NUnit.Framework.DescriptionAttribute("Création d\'un compte Chercheur")]
-        [global::NUnit.Framework.TestCaseAttribute("Madame", "Bouhadoun", "Kenza", "France", "Algérienne", "95220", "Herblay", "0612345678", "kenza.chercheur@example.com", "cher@123456", "cher@123456", "Informatique", "Licence 1", "0", null)]
+        [global::NUnit.Framework.TestCaseAttribute("Madame", "LOUCIF", "Inasse", "France", "Algérienne", "75000", "Toulouse", "0767391563", "loucif.incparis@gmail.com", "inasse@123456", "inasse@123456", "Informatique", "Licence 1", "0", null)]
         public async global::System.Threading.Tasks.Task CreationDunCompteChercheur(string civilite, string nom, string prenom, string pays_Residence, string nationalite, string code_Postal, string ville, string telephone, string email, string mot_De_Passe, string confirmation_Mot_De_Passe, string domaine, string niveau_Etudes, string @__pickleIndex, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;
@@ -183,7 +183,7 @@ namespace CampusFranceProject.Features
         
         [global::NUnit.Framework.TestAttribute()]
         [global::NUnit.Framework.DescriptionAttribute("Création d\'un compte Institutionnel")]
-        [global::NUnit.Framework.TestCaseAttribute("Monsieur", "Martin", "Thomas", "Gabon", "Algérienne", "1000", "Bruxelles", "0470123456", "thomas.martin@example.com", "insti@456789", "insti@456789", "Directeur des partenariats", "Campus France", "École Polytechnique", "1", null)]
+        [global::NUnit.Framework.TestCaseAttribute("Monsieur", "Dupont", "Maxime", "France", "Algérienne", "75001", "Paris", "0470123456", "dupont.maxime@example.com", "max@456789", "max@456789", "Directeur des partenariats", "Campus France", "École Polytechnique", "1", null)]
         public async global::System.Threading.Tasks.Task CreationDunCompteInstitutionnel(
                     string civilite, 
                     string nom, 

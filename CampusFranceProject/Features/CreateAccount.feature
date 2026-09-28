@@ -22,7 +22,7 @@
 
     Examples:
       | civilite | nom       | prenom | pays_residence | nationalite | code_postal | ville   | telephone  | email                        | mot_de_passe | confirmation_mot_de_passe | domaine      | niveau_etudes |
-      | Madame   | Bouhadoun | Kenza   | France         | Algérienne  | 95220       | Herblay | 0612345678 | kenza.chercheur@example.com | cher@123456  | cher@123456                | Informatique | Licence 1      |
+      | Madame   | LOUCIF | Inasse   | France         | Algérienne  | 75000       | Toulouse | 0767391563 | loucif.incparis@gmail.com | inasse@123456  | inasse@123456                | Informatique | Licence 1      |
 
 
   Scenario Outline: Création d'un compte Institutionnel
@@ -39,4 +39,4 @@
 
     Examples:
       | civilite | nom    | prenom | pays_residence | nationalite | code_postal | ville     | telephone  | email                       | mot_de_passe | confirmation_mot_de_passe | fonction                   | type_organisme | nom_organisme        |
-      | Monsieur | Martin | Thomas | Gabon       | Algérienne   | 1000        | Bruxelles | 0470123456 | thomas.martin@example.com | insti@456789  | insti@456789                | Directeur des partenariats | Campus France          | École Polytechnique |
+      | Monsieur | Dupont | Maxime | France       | Algérienne   | 75001        | Paris | 0470123456 | dupont.maxime@example.com | max@456789  | max@456789                | Directeur des partenariats | Campus France          | École Polytechnique |
