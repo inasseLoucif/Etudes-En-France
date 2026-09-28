@@ -10,7 +10,7 @@ namespace CampusFranceProject.StepDefinitions
     [Binding]
     public class CreationDunCompteCampusFranceStepDefinitions
     {
-        private IWebDriver driver;
+        private IWebDriver driver = null!;
 
         // ============================================================
         // AVANT / APRÈS SCÉNARIO
@@ -19,15 +19,39 @@ namespace CampusFranceProject.StepDefinitions
         [BeforeScenario]
         public void BeforeScenario()
         {
-            driver = new EdgeDriver();
-            driver.Manage().Window.Maximize();
+            var options = new EdgeOptions();
+
+            // Jenkins définit HEADLESS=true ; sur votre PC la variable n'existe pas
+            bool headless = Environment.GetEnvironmentVariable("HEADLESS") == "true";
+
+            if (headless)
+            {
+                // Mode sans fenêtre pour Jenkins
+                options.AddArgument("--headless=new");
+                options.AddArgument("--window-size=1920,1080");
+                options.AddArgument("--no-sandbox");
+                options.AddArgument("--disable-gpu");
+                options.AddArgument("--disable-dev-shm-usage");
+
+                // Profil temporaire (le compte système de Jenkins n'a pas de profil Edge)
+                options.AddArgument("--user-data-dir=" +
+                    System.IO.Path.Combine(System.IO.Path.GetTempPath(), "edge-jenkins-" + Guid.NewGuid()));
+            }
+
+            driver = new EdgeDriver(options);
+
+            if (!headless)
+            {
+                driver.Manage().Window.Maximize();
+            }
         }
 
         [AfterScenario]
         public void AfterScenario()
         {
-            driver.Quit();
-            driver.Dispose();
+            // Ne plante pas si Edge n'a pas pu démarrer
+            driver?.Quit();
+            driver?.Dispose();
         }
 
         // ============================================================
@@ -38,6 +62,10 @@ namespace CampusFranceProject.StepDefinitions
         public void GivenJeSuisSurLaPageCreerUnNouveauCompteDeCampusFrance(string url)
         {
             driver.Navigate().GoToUrl(url);
+
+            // Attendre que le formulaire soit chargé (plus lent en mode headless)
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
+            wait.Until(d => d.FindElements(By.Id("user-form")).Count > 0);
         }
 
 
@@ -46,7 +74,7 @@ namespace CampusFranceProject.StepDefinitions
         // ============================================================
 
         [When("je renseigne les informations personnelles du chercheur {string}, {string}, {string}")]
-        public void WhenJeRenseigneLesInformationsPersonnellesDuChercheur(string civilite,string nom,string prenom)
+        public void WhenJeRenseigneLesInformationsPersonnellesDuChercheur(string civilite, string nom, string prenom)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
@@ -73,7 +101,7 @@ namespace CampusFranceProject.StepDefinitions
 
 
         [When("je renseigne les informations de résidence du chercheur {string}, {string}")]
-        public void WhenJeRenseigneLesInformationsDeResidenceDuChercheur(string paysResidence,string nationalite)
+        public void WhenJeRenseigneLesInformationsDeResidenceDuChercheur(string paysResidence, string nationalite)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
@@ -96,7 +124,7 @@ namespace CampusFranceProject.StepDefinitions
 
 
         [When("je renseigne les coordonnées du chercheur {string}, {string}, {string}")]
-        public void WhenJeRenseigneLesCoordonneesDuChercheur(string codePostal,string ville,string telephone)
+        public void WhenJeRenseigneLesCoordonneesDuChercheur(string codePostal, string ville, string telephone)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
@@ -119,7 +147,7 @@ namespace CampusFranceProject.StepDefinitions
 
 
         [When("je renseigne les informations de connexion du chercheur {string}, {string}, {string}")]
-        public void WhenJeRenseigneLesInformationsDeConnexionDuChercheur(string email,string motDePasse,string confirmationMotDePasse)
+        public void WhenJeRenseigneLesInformationsDeConnexionDuChercheur(string email, string motDePasse, string confirmationMotDePasse)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
@@ -170,15 +198,15 @@ namespace CampusFranceProject.StepDefinitions
 
 
         [When("je renseigne les informations du chercheur {string}, {string}")]
-        public void WhenJeRenseigneLesInformationsDuChercheur(string domaine,string niveauEtudes)
+        public void WhenJeRenseigneLesInformationsDuChercheur(string domaine, string niveauEtudes)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
             // Domaine d'études
-            SelectizeByText(form,"edit-field-domaine-etudes-selectized",domaine);
+            SelectizeByText(form, "edit-field-domaine-etudes-selectized", domaine);
 
             // Niveau d'études
-            SelectizeByText(form,"edit-field-niveaux-etude-selectized",niveauEtudes);
+            SelectizeByText(form, "edit-field-niveaux-etude-selectized", niveauEtudes);
         }
 
 
@@ -198,7 +226,7 @@ namespace CampusFranceProject.StepDefinitions
         // ============================================================
 
         [When("je renseigne les informations personnelles de institutionnel {string}, {string}, {string}")]
-        public void WhenJeRenseigneLesInformationsPersonnellesDeInstitutionnel(string civilite,string nom,string prenom)
+        public void WhenJeRenseigneLesInformationsPersonnellesDeInstitutionnel(string civilite, string nom, string prenom)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
@@ -225,7 +253,7 @@ namespace CampusFranceProject.StepDefinitions
 
 
         [When("je renseigne les informations de résidence de institutionnel {string}, {string}")]
-        public void WhenJeRenseigneLesInformationsDeResidenceDeInstitutionnel(string paysResidence,string nationalite)
+        public void WhenJeRenseigneLesInformationsDeResidenceDeInstitutionnel(string paysResidence, string nationalite)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
@@ -248,7 +276,7 @@ namespace CampusFranceProject.StepDefinitions
 
 
         [When("je renseigne les coordonnées de institutionnel {string}, {string}, {string}")]
-        public void WhenJeRenseigneLesCoordonneesDeInstitutionnel(string codePostal,string ville,string telephone)
+        public void WhenJeRenseigneLesCoordonneesDeInstitutionnel(string codePostal, string ville, string telephone)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
@@ -285,7 +313,7 @@ namespace CampusFranceProject.StepDefinitions
 
 
         [When("je renseigne les informations de connexion de institutionnel {string}, {string}, {string}")]
-        public void WhenJeRenseigneLesInformationsDeConnexionDeInstitutionnel(string email,string motDePasse,string confirmationMotDePasse)
+        public void WhenJeRenseigneLesInformationsDeConnexionDeInstitutionnel(string email, string motDePasse, string confirmationMotDePasse)
         {
             var form = driver.FindElement(By.Id("user-form"));
 
@@ -354,7 +382,7 @@ namespace CampusFranceProject.StepDefinitions
                 fonction);
 
             // Type organisme
-            SelectizeByText(form,"edit-field-type-organisme-selectized",typeOrganisme);
+            SelectizeByText(form, "edit-field-type-organisme-selectized", typeOrganisme);
 
             // Nom organisme
             var nomOrganismeInput = form.FindElement(By.Id("edit-field-nom-organisme-0-value"));
@@ -368,7 +396,7 @@ namespace CampusFranceProject.StepDefinitions
         }
 
 
-            [Then("le nom renseigné est {string} pour institutionnel")]
+        [Then("le nom renseigné est {string} pour institutionnel")]
         public void ThenLeNomRenseigneEstPourInstitutionnel(string nomAttendu)
         {
             var form = driver.FindElement(By.Id("user-form"));
@@ -383,7 +411,7 @@ namespace CampusFranceProject.StepDefinitions
         // MÉTHODE POUR LES SELECTIZE
         // ============================================================
 
-        private void SelectizeByText(IWebElement form,string inputId,string valeur)
+        private void SelectizeByText(IWebElement form, string inputId, string valeur)
         {
             var input = form.FindElement(By.Id(inputId));
 
@@ -399,7 +427,7 @@ namespace CampusFranceProject.StepDefinitions
 
             System.Threading.Thread.Sleep(1000);
 
-            var wait = new WebDriverWait(driver,TimeSpan.FromSeconds(10)); // temps d'attente 1min
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10)); // temps d'attente 10 secondes
 
             var option = wait.Until(d =>
             {
